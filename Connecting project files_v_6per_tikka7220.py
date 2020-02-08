@@ -120,6 +120,8 @@ for i in range(0,len(download_url.index)):
         urllib.request.urlretrieve(linka.ix[ind[i],0], filename='C:\\python\\BMC\\'+linka.ix[ind[i]][0][-40:])
 #        time.sleep(1)
 
+#%%There are two ways to do this. Either converge all the files as one, or import them separately as a big pands frame.
+# The method one:
 #%% Read all files with pdf to word and compress program, e.g.WPS PDF to Word
 #the change the compressed doc to csv:
 #https://convertio.co/de/docx-csv/
@@ -132,44 +134,9 @@ dataframes=dataframes.dropna()
 #https://chrisalbon.com/python/data_wrangling/pandas_list_unique_values_in_column/   
 #https://www.guru99.com/python-regular-expressions-complete-tutorial.html#3
 
-
- 
+#The method two: 
 #%%Now I need to do I loop for all files, and save the results
 directory="C:\python\BMC\*.docx"
-#%%
-import glob
-dataframes = []
-all_files2=(glob.glob(directory))
-# Create the list for the three DataFrames you want to create:
-for filename in all_files2:
-    dataframes.append(pd.read_csv(filename))
-#% Scaling to experimental frame (Combes et al. 2016)
-#% In case column names are misplaces (during calculations)
-    #%
-
-    #%%This is how I import docx files:
-    import docx2txt
-    result = docx2txt.process(all_files2[0])
-#    http://theautomatic.net/2019/10/14/how-to-read-word-documents-with-python/
-    #%%now I would need to convert this to panda dataframe
-    from csv import reader
-    import pandas as pd
-    dfa=pd.DataFrame(list(reader(result)))
-    #%%
-    dfax=pd.DataFrame(''.join(list(result)))
-    #%%
-    dfax=pd.DataFrame(convert(result))
-    #%%This is the closest to the result as it is now:
-    dfa=pd.DataFrame(columns=[result])
-#    https://www.edureka.co/community/42332/python-pandas-valueerror-dataframe-constructor-properly
-    #%%
-#    https://github.com/quantopian/pyfolio/issues/604
-
-      
-
-#%%
-directory="C:\python\BMC\*.docx"
-#%
 import glob
 dataframes = []
 all_files2=(glob.glob(directory))
@@ -204,8 +171,7 @@ for i in range(len(list2)):
 for i in range(len(list2)):
     if list2[i][0] == '':
         del list2[i][0]
-
-#%
+#% The pandas are better to handle data (in functions) than list of lists (according to my experience):
 df=pd.DataFrame(list2)
 
 #%%Once you have the dataframe well extracted, the below function it should work:
@@ -266,21 +232,17 @@ def words2(df):
     for i in range(len(io)):
         if not isinstance(io[i], float):
            io3.append(io[i])
-    
-    
-        #%   
+     
     io2=list(tuple(range(io3[0]+1, io3[1])))
 #https://www.geeksforgeeks.org/python-program-to-count-words-in-a-sentence/    
 #res = len(re.findall(r'\w+', 'how many words are here'))  
     res=[]
 #https://stackoverflow.com/questions/44284297/python-regex-keep-alphanumeric-but-remove-numeric
 #'https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992 https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7993'
-#    if i in len(io2)
     for i in io2:
         res.append(len(re.findall(r'\w+', re.sub(r'\b[0-9]+\b', '', df.iloc[i]))))
 #%
     return  np.sum(res)
-#    np.sum(res)
 
 #%%The loop:
 def file_count(all_files2): 
