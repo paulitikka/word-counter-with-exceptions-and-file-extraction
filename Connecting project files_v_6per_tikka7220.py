@@ -132,179 +132,7 @@ dataframes=dataframes.dropna()
 #https://chrisalbon.com/python/data_wrangling/pandas_list_unique_values_in_column/   
 #https://www.guru99.com/python-regular-expressions-complete-tutorial.html#3
 
-#%%Names and titles not 100% same... check.. let's do the same to titles! :)
-ind2=[]
-ind3=[]
-ind4=[]
-for i in range(0, len(dataframes)):  
-    str = (dataframes.iloc[i][0])
-    match = re.search(r'Title:', str)
-    if match:
-        ind2.append(i)
-        ind3.append(i+1)
-        ind4.append(i+2)
 
-titles1=dataframes.iloc[ind2][0]
-titles2=dataframes.iloc[ind3][0]
-titles3=dataframes.iloc[ind4][0]
-titles1=pd.DataFrame(titles1)
-#https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.reset_index.html
-titles1=titles1.reset_index(drop=True)
-titles2=pd.DataFrame(titles2)
-titles2=titles2.reset_index(drop=True)
-titles3=pd.DataFrame(titles3)
-titles3=titles3.reset_index(drop=True)
-titles4=pd.DataFrame()
-
-titles4['Title']=titles1[0]
-titles4['Date']=titles2[0]
-titles4['Reviewer']=titles3[0]
-#https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.drop.html
-titles4=titles4.drop([120,193], axis=0)
-titles4=titles4.drop([30,17,75,198,204], axis=0)
-titles4=titles4.drop([10,212,214,151,254], axis=0)
-titles4=titles4.reset_index(drop=True)
-tot1=[]
-tot2=[]
-tot3=[]
-
-for i in titles4['Date'].index:
-    str = (titles4['Date'][i])
-    match = re.search(r' Reviewer: ', str)
-    if match:
-        tot1.append(i)
-for i in titles4['Reviewer'].index:
-    str = (titles4['Reviewer'][i])
-    match = re.search(r'Reviewer: ', str)
-    if match:
-        tot2.append(i)   
-tot3=tot2+tot1        
-titles4=titles4.ix[tot3]       
-titles4['Rev_tot']=    titles4['Date']
-titles4['Rev_tot'][tot2]=titles4['Reviewer'][tot2]
-
-#%%
-titles4=titles4.reset_index(drop=True)
-splitd1=[]
-splitd2=[]
-splitd3=[]
-name=[]
-for i in range(0,len(titles4)):
-    splitd1.append(re.split(r'Version: 0 Date: ', titles4['Rev_tot'][i]))
-    splitd2.append(re.split(r'Reviewer\'s report', titles4['Rev_tot'][i]))
-for i in range(0,len(splitd2)):    
-    splitd3.append(re.split(r'Reviewer: ', splitd2[i][0]))
-
-for i in range(0,len(splitd3)):    
-    name.append(re.split(r'Reviewer: ', splitd3[i][1]))
-name=pd.DataFrame(name)
-#%
-spl1=[]
-spl2=[]
-spl3=[]
-for i in titles4['Date'].index:
-    spl1.append(re.split(r'Version: 0 Date: ', titles4['Date'][i]))
-    #%
-for i in range(0,len(spl1)):   
-   spl2.append(re.split(r' Reviewer: ', spl1[i][1]))
-   spl3.append(spl2[i][0]) 
-titles4['Reviewer']=name    
-titles4['Date']=spl3  
-titles4=titles4.drop(columns=['Rev_tot'])
-#https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.drop.html
-#%%
-titles4.to_csv('C:/python/titles4.csv',index=False,header='infer') 
-#%%Kokeillaan alla olevaa vaan yhdelle tiedostolle:
-    #%
-def pop(df, values, axis=1):
-    if axis == 0:
-        if isinstance(values, (list, tuple)):
-            popped_rows = df.loc[values]
-            df.drop(values, axis=0, inplace=True)
-            return popped_rows
-        elif isinstance(values, (int)):
-            popped_row = df.loc[values].to_frame().T
-            df.drop(values, axis=0, inplace=True)
-            return popped_row
-        else:
-            print('values parameter needs to be a list, tuple or int.')
-    elif axis == 1:
-        # current df.pop(values) logic here
-        return df.pop(values)  
-
-
-#%%
-def words1(directory="C:\\python\\BMC\\testa.csv"):
-    import docx
-    import pandas as pd
-    df=pd.read_csv(directory)
-    io=[]
-
-    for i in range(0, len(df)):
-        str = (df.iloc[i][0])
-        match1 = re.search(r'Reviewer\'s report:', str)
-        #%
-        match2 = re.search(r'Are the methods appropriate and well described?', str)
-        match3 = re.search(r'https://', str)
-        match4 = re.search(r'Does the work include the necessary controls?', str)
-        match5 = re.search(r'Are the conclusions drawn adequately supported by the data shown?', str)
-        match6 = re.search(r'Are you able to assess any statistics in the \
-                      manuscript or would you recommend an additional statistical review?', str)
-        match7 = re.search(r'I am able to assess the statistics', str)
-        match8 = re.search(r'Quality of written English', str)
-        match8b = re.search(r'Acceptable', str)
-        match9 = re.search(r'Declaration of competing interests', str)
-        match10 = re.search(r'I declare that I have no competing interests.', str)  
-#%
-        if match1:
-            io.append(i)
-        elif match2:
-            io.append(i)
-
-        elif match3:
-            io.append(i*100000)
-
-        elif match4:
-            io.append(i)
-        elif match5:
-            io.append(i)
-        elif match6:
-            io.append(i)
-        elif match7:
-            io.append(i)
-        elif match8:
-            io.append(i)
-        elif match8b:
-            io.append(i)
-        elif match9:
-            io.append(i)
-        elif match10:
-            io.append(i)
-    for i in range(0,len(io)):
-        if io[i]>100000:
-            io[i]=io[i]/100000
-    dx=[]
-    for i in range(0,len(io)):
-        if isinstance(io[i], float):
-           dx.append(io[i])
-           #
-    for i in range(0,len(io)-1):
-        if isinstance(io[i], float):
-           io.pop(i)
-           
-    io2=list(tuple(range(io[0]+1, io[1])))
-    if dx[0]>1:
-        io2.remove(dx[0])
-
-#https://www.geeksforgeeks.org/python-program-to-count-words-in-a-sentence/    
-#res = len(re.findall(r'\w+', 'how many words are here'))  
-    res=[]
-#https://stackoverflow.com/questions/44284297/python-regex-keep-alphanumeric-but-remove-numeric
-#'https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7992 https://onlinelibrary.wiley.com/doi/full/10.1002/sim.7993'
-    for i in io2:
-        res.append(len(re.findall(r'\w+', re.sub(r'\b[0-9]+\b', '', df.iloc[i][0]))))
-
-    return np.sum(res) 
  
 #%%Now I need to do I loop for all files, and save the results
 directory="C:\python\BMC\*.docx"
@@ -336,21 +164,8 @@ for filename in all_files2:
 #    https://www.edureka.co/community/42332/python-pandas-valueerror-dataframe-constructor-properly
     #%%
 #    https://github.com/quantopian/pyfolio/issues/604
-    dfa.resize(1, 1)
-#    dfa.to_string(index=False)
-#%%
-def convert(s): 
-    str1 = "" 
-    return(str1.join(s)) 
-    #%%
-def convert(s):  
-    # initialization of string to "" 
-    new = "" 
-    # traverse in the string  
-    for x in s: 
-        new += x  
-    # return string  
-    return new        
+
+      
 
 #%%
 directory="C:\python\BMC\*.docx"
@@ -392,10 +207,10 @@ for i in range(len(list2)):
 
 #%
 df=pd.DataFrame(list2)
-#%%
+
+#%%Once you have the dataframe well extracted, the below function it should work:
 def words2(df):
     #%
-#    dfa=df[39]
     io=[]
     xx=[]
     for i in range(0, len(df)):
@@ -435,10 +250,6 @@ def words2(df):
             io.append(i)
         elif match10:
             io.append(i)
-            #%
-#        elif len(io)<2:
-#            xx.append(len(df))
-#    xx.append(len(df))
     io.append(len(df))
             #%
     for i in range(0,len(io)):
@@ -459,11 +270,6 @@ def words2(df):
     
         #%   
     io2=list(tuple(range(io3[0]+1, io3[1])))
-    #%
-#    for i in range(len(dx)):
-#        if dx[i]>1:
-#            io2.remove(dx[i])
-
 #https://www.geeksforgeeks.org/python-program-to-count-words-in-a-sentence/    
 #res = len(re.findall(r'\w+', 'how many words are here'))  
     res=[]
@@ -475,6 +281,7 @@ def words2(df):
 #%
     return  np.sum(res)
 #    np.sum(res)
+
 #%%The loop:
 def file_count(all_files2): 
     #%%
@@ -524,7 +331,8 @@ def file_count(all_files2):
         #%%df.iloc[i][0]
 #        words2(df.iloc[55,:])
          words2(df[99])
-         #%%
+         
+#%% Finally save the data:
 count=pd.DataFrame(count) 
 count1=pd.DataFrame(count1)     
 count2=pd.DataFrame(count2)
