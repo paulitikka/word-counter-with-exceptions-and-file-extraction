@@ -9,6 +9,8 @@ Created on Thu Jan 23 14:16:40 2020
 # Extract the following journal peer review data for each (available) article from 
 # BMJ, PLOS Medicine, and BMC between January 15 2019 and January 14 2020, and use also google searches: 
 
+(fyi, this file may be excessive)
+
 #(1) The quality of preventive care for pre-school aged children in Australian general practice
 #(2) Louise K. Willes
 #(3) 6.12.2019
